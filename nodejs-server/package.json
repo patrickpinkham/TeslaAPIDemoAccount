@@ -1,7 +1,7 @@
 {
-  "name": "simple-inventory-api",
-  "version": "1",
-  "description": "This is a simple API",
+  "name": "tesla-model-s-api",
+  "version": "2",
+  "description": "A demo API to access and control the Tesla Model S",
   "main": "index.js",
   "scripts": {
 	"prestart": "npm install",

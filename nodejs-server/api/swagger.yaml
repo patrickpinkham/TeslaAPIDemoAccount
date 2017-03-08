@@ -1,123 +1,109 @@
 ---
 swagger: "2.0"
 info:
-  description: "This is a simple API"
-  version: "1"
-  title: "Simple Inventory API"
-  contact:
-    email: "you@your-company.com"
-  license:
-    name: "Apache 2.0"
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "virtserver.swaggerhub.com"
-basePath: "/0001vrn/Hello/1.0.0"
-tags:
-- name: "admins"
-  description: "Secured Admin-only calls"
-- name: "developers"
-  description: "Operations available to regular developers"
-schemes:
-- "https"
+  description: "A demo API to access and control the Tesla Model S"
+  version: "2"
+  title: "Tesla Model S API"
 paths:
-  /inventory:
+  /vehicle:
     get:
-      tags:
-      - "developers"
-      summary: "searches inventory"
-      description: "By passing in the appropriate options, you can search for\navailable\
-        \ inventory in the system\n"
-      operationId: "searchInventory"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "searchString"
-        in: "query"
-        description: "pass an optional search string for looking up inventory"
-        required: false
-        type: "string"
-      - name: "skip"
-        in: "query"
-        description: "number of records to skip for pagination"
-        required: false
-        type: "integer"
-        minimum: 0
-        format: "int32"
-      - name: "limit"
-        in: "query"
-        description: "maximum number of records to return"
-        required: false
-        type: "integer"
-        maximum: 50
-        minimum: 0
-        format: "int32"
+      description: "Details about owned vehicle"
+      operationId: "vehicleGET"
+      parameters: []
       responses:
         200:
-          description: "search results matching criteria"
+          description: "Success"
           schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/InventoryItem"
-        400:
-          description: "bad input parameter"
-      x-swagger-router-controller: "Developers"
+            $ref: "#/definitions/inline_response_200"
+      x-swagger-router-controller: "Default"
+  /vehicles/{id}/command/set_temps:
     post:
-      tags:
-      - "admins"
-      summary: "adds an inventory item"
-      description: "Adds an item to the system"
-      operationId: "addInventory"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
+      description: "Set the temperature target for the HVAC system."
+      operationId: "set_temps"
       parameters:
-      - in: "body"
-        name: "inventoryItem"
-        description: "Inventory item to add"
-        required: false
-        schema:
-          $ref: "#/definitions/InventoryItem"
+      - name: "id"
+        in: "path"
+        description: "The ID number of the car"
+        required: true
+        type: "string"
+      - name: "driver_temp"
+        in: "query"
+        description: "The desired temperature on the driver's side in celcius."
+        required: true
+        type: "string"
+      - name: "passenger_temp"
+        in: "query"
+        description: "The desired temperature on the passenger's side in celcius."
+        required: true
+        type: "string"
       responses:
-        201:
-          description: "item created"
-        400:
-          description: "invalid input, object invalid"
-        409:
-          description: "an existing item already exists"
-      x-swagger-router-controller: "Admins"
+        200:
+          description: "success"
+          schema:
+            $ref: "#/definitions/inline_response_200_1"
+      x-swagger-router-controller: "Default"
+  /vehicles/{id}/data_request/drive_state:
+    get:
+      description: "Returns the driving and position state of the vehicle."
+      operationId: "drive_state"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The ID number of the car"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/inline_response_200_2"
+      x-swagger-router-controller: "Default"
 definitions:
-  InventoryItem:
-    type: "object"
-    required:
-    - "id"
-    - "manufacturer"
-    - "name"
-    - "releaseDate"
+  inline_response_200_1:
     properties:
-      id:
+      result:
+        type: "boolean"
+        example: true
+      reason:
         type: "string"
-        format: "uuid"
-        example: "d290f1ee-6c54-4b01-90e6-d701748f0851"
-      name:
+        example: ""
+  inline_response_200:
+    properties:
+      color:
         type: "string"
-        example: "Widget Adapter"
-      releaseDate:
+        example: "Red"
+      display_name:
         type: "string"
+        example: "Fernando's Model S"
+      vehicle_id:
+        type: "string"
+        example: "1234567890"
+      vin:
+        type: "string"
+        example: "5YJSA1CN5CFP01657"
+  inline_response_200_2:
+    properties:
+      shift_state:
+        type: "string"
+        example: "sport"
+      speed:
+        type: "number"
+        format: "double"
+        example: 94.5
+      latitude:
+        type: "number"
+        format: "double"
+        example: 37.42920000000000158024704433046281337738037109375
+        description: "degrees north of equator"
+      longitude:
+        type: "number"
+        format: "double"
+        example: 122.1380999999999943383954814635217189788818359375
+        description: "degrees west of the prime meridian"
+      heading:
+        type: "integer"
         format: "int32"
-        example: "2016-08-29T09:12:33.001Z"
-      manufacturer:
-        $ref: "#/definitions/Manufacturer"
-  Manufacturer:
-    required:
-    - "name"
-    properties:
-      name:
-        type: "string"
-        example: "ACME Corporation"
-      homePage:
-        type: "string"
-        format: "url"
-        example: "https://www.acme-corp.com"
-      phone:
-        type: "string"
-        example: "408-867-5309"
+        example: 6
+        description: "integer compass heading"
+        minimum: 0
+        maximum: 359
