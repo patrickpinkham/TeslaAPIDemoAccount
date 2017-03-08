@@ -5,7 +5,7 @@ info:
   version: "0.0.1"
   title: "Tesla Model S API"
 host: "virtserver.swaggerhub.com"
-basePath: "/PinkhamDemo/Tesla-ModelS-API2/0.0.1"
+basePath: "/PinkhamDemo/Tesla-ModelS-API4/0.0.1"
 schemes:
 - "https"
 paths:
